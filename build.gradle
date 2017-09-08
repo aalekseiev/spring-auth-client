@@ -17,6 +17,13 @@ jar {
     version =  '0.1.0'
 }
 
+bootRun {
+    addResources = true
+    if (project.hasProperty("debug") && project.debug) {
+        jvmArgs = ["-Xmx256m", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=15081,suspend=n"]
+    }
+}
+
 repositories {
     mavenCentral()
 }
