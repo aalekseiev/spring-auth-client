@@ -3,12 +3,78 @@
 <head> 
     <title>Getting Started: Serving Web Content</title> 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-    <form action="http://localhost:9000/login" method="post">
-    	Login: <input name="login" type="text" /> <br />
-    	Password: <input name="password" type="password" />
-    	<button type="submit">Submit</button>
+    <form id="idLoginForm">
+    	Login: <input name="username" type="text" value="admin" /> <br />
+    	Password: <input name="password" type="password" value="password" />
+    	<input type="submit" value="Go" />
     </form>
+    
+    <script>
+		$( "#idLoginForm" ).submit(function( event ) {
+		  var myjson = {}; $.each($("#idLoginForm").serializeArray(), function() { myjson[this.name] = this.value; }); 
+		  
+		  var val = JSON.stringify(myjson);
+
+		  $.ajax({
+			  url: "http://localhost/users/token/obtain",
+			  dataType: "json",
+			  data: val,
+			  contentType:"application/json; charset=utf-8",
+			  type: "post",
+			  success: function(data) {
+				    var dataStr = JSON.stringify(data);
+			    	console.log(dataStr);
+					$("#idResult").html(dataStr);
+					document.cookie =
+						 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+			  }
+			})  .fail(function(data) {
+				var dataStr = JSON.stringify(data);
+		    	console.log(dataStr);
+				$("#idResult").html(dataStr);
+			    alert( "error" );
+			  });
+		  console.log(val);
+		  
+		  event.preventDefault();
+		});
+	</script>
+    
+    <div id="idResult">
+    </div>
+    
+    <form id="idSignupForm">
+    	Signup Login: <input name="username" type="text" value="admin" /> <br />
+    	Password: <input name="password" type="password" value="password" />
+    	<input type="submit" value="SignUp" />
+    </form>
+	
+	<script>
+		$( "#idSignupForm" ).submit(function( event ) {
+		  var myjson = {}; $.each($("#idSignupForm").serializeArray(), function() { myjson[this.name] = this.value; }); 
+		  
+		  var val = JSON.stringify(myjson);
+
+		  $.ajax({
+			  url: "http://localhost/users/sign-up",
+			  dataType: "json",
+			  data: val,
+			  contentType:"application/json; charset=utf-8",
+			  type: "post",
+			  success: function(data) {
+				    var dataStr = JSON.stringify(data);
+			    	console.log(dataStr);
+					$("#idResult").html(dataStr);
+			  }
+			});
+		  
+		  console.log(val);
+		  
+		  event.preventDefault();
+		});
+	</script>
 </body>
 </html>
