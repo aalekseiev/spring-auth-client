@@ -29,23 +29,22 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
 
     @Override
     public CsrfToken generateToken(HttpServletRequest request) {
-//        String id = UUID.randomUUID().toString().replace("-", "");
-//        return new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", id);
     	return new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", "dummy-csrf-value");
     }
 
     @Override
     public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
-        if (token == null) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.removeAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME);
-            }
-        }
-        else {
-            HttpSession session = request.getSession();
-            session.setAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME, token);
-        }
+    	System.out.println("Don't know how to save token because this is not a UAA server");
+//        if (token == null) {
+//            HttpSession session = request.getSession(false);
+//            if (session != null) {
+//                session.removeAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME);
+//            }
+//        }
+//        else {
+//            HttpSession session = request.getSession();
+//            session.setAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME, token);
+//        }
     }
 
     @Override
