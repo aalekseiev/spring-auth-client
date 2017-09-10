@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.UUID;
 
 @Component
 public class JWTCsrfTokenRepository implements CsrfTokenRepository {
@@ -34,17 +32,7 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
 
     @Override
     public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
-    	System.out.println("Don't know how to save token because this is not a UAA server");
-//        if (token == null) {
-//            HttpSession session = request.getSession(false);
-//            if (session != null) {
-//                session.removeAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME);
-//            }
-//        }
-//        else {
-//            HttpSession session = request.getSession();
-//            session.setAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME, token);
-//        }
+    	LOG.warn("Don't know how to save token because this is not a UAA server");
     }
 
     @Override
