@@ -28,6 +28,7 @@
 				    var dataStr = JSON.stringify(data);
 			    	console.log(dataStr);
 					$("#idResult").html(dataStr);
+					$("#idResult").css('color','green');
 					document.cookie =
 						 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
 			  }
@@ -35,6 +36,7 @@
 				var dataStr = JSON.stringify(data);
 		    	console.log(dataStr);
 				$("#idResult").html(dataStr);
+				$("#idResult").css('color','red');
 			    alert( "error" );
 			  });
 		  console.log(val);
@@ -66,13 +68,15 @@
 			  type: "post",
 			  success: function(data) {
 				    var dataStr = JSON.stringify(data);
-			    	console.log(dataStr);
+			    	console.log("success -->> " + dataStr);
 					$("#idResult").html(dataStr);
+					$("#idResult").css('color','green');
 			  }
-			}).fail(function(data) {
+			}) .fail(function(data) {
 				var dataStr = JSON.stringify(data);
-		    	console.log(dataStr);
+		    	console.log("error -->> " + dataStr);
 				$("#idResult").html(dataStr);
+				$("#idResult").css('color','red');
 			    alert( "error" );
 			  });
 		  

@@ -41,7 +41,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             .addFilter(new JWTAuthorizationFilter(authenticationManager()));
     }
 
-    @Bean
+    
+    
+    @Override
+	public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web)
+			throws Exception {
+    	web.ignoring()
+    	// ignore all URLs that start with /resources/ or /static/
+    	           .antMatchers("/resources/**", "/static/**", "/login");
+	}
+
+	@Bean
     CorsConfigurationSource corsConfigurationSource() {
       final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
