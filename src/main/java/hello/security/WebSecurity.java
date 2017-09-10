@@ -1,7 +1,5 @@
 package hello.security;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -27,14 +25,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().disable()
-        	.csrf().csrfTokenRepository(jwtCsrfTokenRepository).and()
+        	.csrf()
+        	    .csrfTokenRepository(jwtCsrfTokenRepository)
+        	    .ignoringAntMatchers("/login")
+        .and()
         	.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        	.antMatchers(HttpMethod.GET, "/login").permitAll()
-                .anyRequest().authenticated().and()
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()));
+        	.antMatchers(HttpMethod.GET, "/login")
+        		.permitAll()
+            .anyRequest()
+            	.authenticated()
+            .and()
+            .addFilter(new JWTAuthorizationFilter(authenticationManager()));
     }
 
     @Bean

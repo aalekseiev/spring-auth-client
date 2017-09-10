@@ -69,7 +69,12 @@
 			    	console.log(dataStr);
 					$("#idResult").html(dataStr);
 			  }
-			});
+			}).fail(function(data) {
+				var dataStr = JSON.stringify(data);
+		    	console.log(dataStr);
+				$("#idResult").html(dataStr);
+			    alert( "error" );
+			  });
 		  
 		  console.log(val);
 		  
