@@ -1,8 +1,11 @@
 package hello.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -58,14 +62,21 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser()
+            Claims body = Jwts.parser()
                     .setSigningKey(SecurityConstants.SECRET)
                     .parseClaimsJws(token.replace(SecurityConstants.JWT_TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
+                    .getBody();
+            String user = body.getSubject();
+            List<String> permissions = body.get("permissions", List.class);
 
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            	
+            	List<GrantedAuthority> authorities = new ArrayList<>();
+            	for (String curPermission : permissions) {
+					authorities.add(new SimpleGrantedAuthority(curPermission));
+				}
+            	
+                return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }
             return null;
         }
