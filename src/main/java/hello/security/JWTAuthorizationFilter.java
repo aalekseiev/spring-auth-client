@@ -3,14 +3,14 @@ package hello.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private boolean ignoreFailure = false;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
-        super(authManager);
+    public JWTAuthorizationFilter() {
     }
 
     @Override
@@ -43,18 +43,28 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = null;
         try {
-            authentication = getAuthentication(tokenValue);
+            UsernamePasswordAuthenticationToken authentication = getAuthentication(tokenValue);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            chain.doFilter(request, response);
         } catch (ExpiredJwtException expJwt) {
             SecurityContextHolder.clearContext();
 
-            redirectStrategy.sendRedirect(request,response, "/refresh_token" + "?redirect_uri=" + request.getRequestURL().toString());
-            return;
-        }
+            onUnsuccessfulAuthentication(request, response, null);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(request, response);
+            if (isIgnoreFailure()) {
+                chain.doFilter(request, response);
+            }
+
+
+        }
+    }
+
+    protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        redirectStrategy.sendRedirect(request, response, "/refresh_token" + "?redirect_uri=" + request.getRequestURL().toString());
+//        response.comm
+//        response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
@@ -77,5 +87,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             return new UsernamePasswordAuthenticationToken(user, null, authorities);
         }
         return null;
+    }
+
+    public boolean isIgnoreFailure() {
+        return ignoreFailure;
+    }
+
+    public JWTAuthorizationFilter setIgnoreFailure(boolean ignoreFailure) {
+        this.ignoreFailure = ignoreFailure;
+        return this;
     }
 }
