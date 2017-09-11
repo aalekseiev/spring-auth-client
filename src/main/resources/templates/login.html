@@ -31,6 +31,7 @@
 					$("#idResult").css('color','green');
 					document.cookie =
 						 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+					localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
 			  }
 			})  .fail(function(data) {
 				var dataStr = JSON.stringify(data);
@@ -87,11 +88,42 @@
 		});
 	</script>
 	
-	<button id="idLogout">LogOut</button>
+	<button id="idLogout">LogOut</button> <br />
 	<script>
 		$("#idLogout").click(function() {
 			document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
 		});
+	</script>
+	
+	<button id="idRefreshToken">RefreshToken</button> <br />
+	<script>
+		$("#idRefreshToken").click(function() {
+			var retrievedObject = localStorage.getItem('RefreshToken');
+			$.ajax({
+				  url: "http://localhost/token/refresh",
+				  dataType: "json",
+				  data: '{ "tokenId": ' + retrievedObject + ' }',
+				  contentType:"application/json; charset=utf-8",
+				  type: "post",
+				  success: function(data) {
+					    var dataStr = JSON.stringify(data);
+				    	console.log(dataStr);
+						$("#idResult").html(dataStr);
+						$("#idResult").css('color','green');
+						document.cookie =
+							 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+						localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+				  }
+				})  .fail(function(data) {
+					var dataStr = JSON.stringify(data);
+			    	console.log(dataStr);
+					$("#idResult").html(dataStr);
+					$("#idResult").css('color','red');
+				    alert( "error" );
+				  });
+			  console.log(val);
+		});
+		
 	</script>
 </body>
 </html>
