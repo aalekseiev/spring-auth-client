@@ -6,6 +6,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
+	<div id="idResult">
+    </div>
+
     <form id="idLoginForm">
     	Login: <input name="username" type="text" value="admin" /> <br />
     	Password: <input name="password" type="password" value="password" /> <br />
@@ -46,8 +49,7 @@
 		});
 	</script>
     
-    <div id="idResult">
-    </div>
+    
     
     <form id="idSignupForm">
     	Signup Login: <input name="username" type="text" value="admin" /> <br />
@@ -91,7 +93,8 @@
 	<button id="idLogout">LogOut</button> <br />
 	<script>
 		$("#idLogout").click(function() {
-			document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+			document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+			localStorage.removeItem("RefreshToken");
 		});
 	</script>
 	
