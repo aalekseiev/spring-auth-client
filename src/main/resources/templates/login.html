@@ -14,6 +14,7 @@
     	Password: <input name="password" type="password" value="password" /> <br />
     	<input type="submit" value="Login" />
     </form>
+    <br />
     
     <script>
 		$( "#idLoginForm" ).submit(function( event ) {
@@ -35,6 +36,7 @@
 					document.cookie =
 						 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
 					localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+					localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
 			  }
 			})  .fail(function(data) {
 				var dataStr = JSON.stringify(data);
@@ -57,6 +59,7 @@
     	Permissions: <input name="permissions" type="text" value="admin,confirmed" /> <br />
     	<input type="submit" value="SignUp" />
     </form>
+    <br />
 	
 	<script>
 		$( "#idSignupForm" ).submit(function( event ) {
@@ -95,6 +98,7 @@
 		$("#idLogout").click(function() {
 			document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
 			localStorage.removeItem("RefreshToken");
+			localStorage.removeItem("CSRF-Token");
 		});
 	</script>
 	
@@ -116,6 +120,7 @@
 						document.cookie =
 							 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
 						localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+						localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
 				  }
 				})  .fail(function(data) {
 					var dataStr = JSON.stringify(data);
