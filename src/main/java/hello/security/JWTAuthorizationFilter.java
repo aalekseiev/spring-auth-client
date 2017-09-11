@@ -63,13 +63,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         redirectStrategy.sendRedirect(request, response, "/refresh_token" + "?redirect_uri=" + request.getRequestURL().toString());
-//        response.comm
-//        response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
-        UsernamePasswordAuthenticationToken result = null;
-
         // parse the token.
         Claims body = Jwts.parser()
                 .setSigningKey(SecurityConstants.SECRET)
