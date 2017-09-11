@@ -50,7 +50,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			throws Exception {
     	web.ignoring()
     	// ignore all URLs that start with /resources/ or /static/
-    	           .antMatchers("/resources/**", "/static/**", "/login");
+    	           .antMatchers("/resources/**", "/static/**", "/login", "/refresh_token");
 	}
 
 	@Bean

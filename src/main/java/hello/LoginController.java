@@ -11,4 +11,8 @@ public class LoginController {
         return "login";
     }
 
+    @RequestMapping("/refresh_token")
+    public String refreshToken() {
+        return "refresh_token";
+    }
 }
