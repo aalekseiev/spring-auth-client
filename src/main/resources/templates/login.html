@@ -133,5 +133,15 @@
 		});
 		
 	</script>
+	
+	<br />
+	<div id="idTokens">
+	
+	</div>
+	<script>
+		$("#idTokens").html("RefreshToken: " + localStorage.getItem("RefreshToken") 
+						+ "<br />CSRF-Token: " + localStorage.getItem("CSRF-Token")
+						+ "<br />Cookie: " + document.cookie);
+	</script>
 </body>
 </html>
