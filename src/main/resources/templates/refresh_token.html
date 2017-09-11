@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Refresh token page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="idResult">
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var retrievedObject = localStorage.getItem('RefreshToken');
+        console.log('Retrieved object' + retrievedObject);
+        $.ajax({
+            url: "http://localhost/token/refresh",
+            dataType: "json",
+            data: '{ "tokenId": ' + retrievedObject + ' }',
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            success: function (data) {
+                var dataStr = JSON.stringify(data);
+                console.log(dataStr);
+                $("#idResult").html(dataStr);
+                $("#idResult").css('color', 'green');
+                document.cookie =
+                    'Authorization=' + data.jwt + '; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+                localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+                localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
+
+                var params = (new URL(document.location)).searchParams;
+                var redirectUri = params.get("redirect_uri");
+                if (!redirectUri) {
+                    redirectUri = location.protocol + "//" + location.host
+                }
+                window.location.href = redirectUri;
+            }
+        }).fail(function (data) {
+            var dataStr = JSON.stringify(data);
+            console.log(dataStr);
+            $("#idResult").html(dataStr);
+            $("#idResult").css('color', 'red');
+            alert("error");
+        });
+    }, false);
+
+</script>
+</body>
+</html>
