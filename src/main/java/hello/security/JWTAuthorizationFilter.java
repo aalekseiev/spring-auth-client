@@ -39,7 +39,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
         String tokenValue = Optional
-                .ofNullable(WebUtils.getCookie(request, SecurityConstants.JWT_HEADER_STRING)).map(Cookie::getValue).orElse("");
+                .ofNullable(WebUtils.getCookie(request, SecurityConstants.JWT_COOKIE_NAME)).map(Cookie::getValue).orElse("");
 
         // Can be false if cookie value is null
         if (tokenValue == null || tokenValue.isEmpty()) {

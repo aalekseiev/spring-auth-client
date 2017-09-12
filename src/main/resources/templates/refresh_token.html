@@ -9,13 +9,20 @@
 <div id="idResult">
 </div>
 <script>
+	function getCookie(name) {
+	  var value = "; " + document.cookie;
+	  var parts = value.split("; " + name + "=");
+	  if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+
     document.addEventListener('DOMContentLoaded', function () {
         var retrievedObject = localStorage.getItem('RefreshToken');
+        var cookieJwt = '"' + getCookie("Authorization") + '"';
         console.log('Retrieved object' + retrievedObject);
         $.ajax({
             url: "http://localhost/token/refresh",
             dataType: "json",
-            data: '{ "tokenId": ' + retrievedObject + ' }',
+            data: '{ "tokenId": ' + retrievedObject + ', "jwt" : ' + cookieJwt + ' }',
             contentType: "application/json; charset=utf-8",
             type: "post",
             success: function (data) {
