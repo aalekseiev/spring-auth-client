@@ -22,7 +22,7 @@
         $.ajax({
             url: "http://localhost/token/refresh",
             dataType: "json",
-            data: '{ "tokenId": ' + retrievedObject + ', "jwt" : ' + cookieJwt + ' }',
+            data: '{ "tokenId": ' + retrievedObject + ' }',
             contentType: "application/json; charset=utf-8",
             type: "post",
             success: function (data) {
