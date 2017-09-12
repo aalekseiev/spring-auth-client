@@ -1,20 +1,23 @@
 package hello.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import java.security.PublicKey;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 
 @Component
 public class JWTCsrfTokenRepository implements CsrfTokenRepository {
@@ -23,7 +26,12 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(JWTCsrfTokenRepository.class);
 
-    public JWTCsrfTokenRepository() {}
+    private final PublicKey publicKey;
+    
+    @Autowired
+    public JWTCsrfTokenRepository(PublicKey publicKey) {
+        this.publicKey = publicKey;
+    }
 
     @Override
     public CsrfToken generateToken(HttpServletRequest request) {
@@ -54,7 +62,7 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
     	String jwtString = jwtHeader;
     	try {
     		Jws<Claims> parseClaimsJws = Jwts.parser()
-    				.setSigningKey(SecurityConstants.SECRET)
+                    .setSigningKey(publicKey)
     				.parseClaimsJws(jwtString);
     		
     		String csrfTokenString = parseClaimsJws.getBody().get("xsrfToken", String.class);

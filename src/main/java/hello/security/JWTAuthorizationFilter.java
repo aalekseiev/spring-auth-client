@@ -28,7 +28,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private boolean ignoreFailure = false;
 
-    private PublicKey publicKey;
+    private final PublicKey publicKey;
 
     public JWTAuthorizationFilter(PublicKey publicKey) {
         this.publicKey = publicKey;
@@ -73,7 +73,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         // parse the token.
         Claims body = Jwts.parser()
                 .setSigningKey(publicKey)
-                .parseClaimsJws(token.replace(SecurityConstants.JWT_TOKEN_PREFIX, "")).getBody();
+                .parseClaimsJws(token).getBody();
         String user = body.getSubject();
         List<String> permissions = body.get("permissions", List.class);
 
