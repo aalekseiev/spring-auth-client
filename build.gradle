@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    baseName = 'gs-serving-web-content'
+    version =  '0.1.0'
+}
+
+bootRun {
+    addResources = true
+    if (project.hasProperty("debug") && project.debug) {
+        jvmArgs = ["-Xmx256m", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=15081,suspend=n"]
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-devtools")
+    
+    compile("io.jsonwebtoken:jjwt:0.7.0")
+    compile("org.hsqldb:hsqldb")
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile ('commons-io:commons-io:2.5')
+    
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Getting Started: Serving Web Content</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<div id="idResult">
+    </div>
+
+    <form id="idLoginForm">
+    	Login: <input name="username" type="text" value="admin" /> <br />
+    	Password: <input name="password" type="password" value="password" /> <br />
+    	<input type="submit" value="Login" />
+    </form>
+    <br />
+    
+    <script>
+		$( "#idLoginForm" ).submit(function( event ) {
+		  var myjson = {}; $.each($("#idLoginForm").serializeArray(), function() { myjson[this.name] = this.value; }); 
+		  
+		  var val = JSON.stringify(myjson);
+
+		  $.ajax({
+			  url: "http://localhost/token/obtain",
+			  dataType: "json",
+			  data: val,
+			  contentType:"application/json; charset=utf-8",
+			  type: "post",
+			  success: function(data) {
+				    var dataStr = JSON.stringify(data);
+			    	console.log(dataStr);
+					$("#idResult").html(dataStr);
+					$("#idResult").css('color','green');
+					document.cookie =
+						 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+					localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+					localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
+			  }
+			})  .fail(function(data) {
+				var dataStr = JSON.stringify(data);
+		    	console.log(dataStr);
+				$("#idResult").html(dataStr);
+				$("#idResult").css('color','red');
+			    alert( "error" );
+			  });
+		  console.log(val);
+		  
+		  event.preventDefault();
+		});
+	</script>
+    
+    
+    
+    <form id="idSignupForm">
+    	Signup Login: <input name="username" type="text" value="admin" /> <br />
+    	Password: <input name="password" type="password" value="password" /> <br />
+    	Permissions: <input name="permissions" type="text" value="admin,confirmed" /> <br />
+    	<input type="submit" value="SignUp" />
+    </form>
+    <br />
+	
+	<script>
+		$( "#idSignupForm" ).submit(function( event ) {
+		  var myjson = {}; $.each($("#idSignupForm").serializeArray(), function() { myjson[this.name] = this.value; }); 
+		  
+		  var val = JSON.stringify(myjson);
+
+		  $.ajax({
+			  url: "http://localhost/users/sign-up",
+			  dataType: "json",
+			  data: val,
+			  contentType:"application/json; charset=utf-8",
+			  type: "post",
+			  success: function(data) {
+				    var dataStr = JSON.stringify(data);
+			    	console.log("success -->> " + dataStr);
+					$("#idResult").html(dataStr);
+					$("#idResult").css('color','green');
+			  }
+			}) .fail(function(data) {
+				var dataStr = JSON.stringify(data);
+		    	console.log("error -->> " + dataStr);
+				$("#idResult").html(dataStr);
+				$("#idResult").css('color','red');
+			    alert( "error" );
+			  });
+		  
+		  console.log(val);
+		  
+		  event.preventDefault();
+		});
+	</script>
+	
+	<button id="idLogout">LogOut</button> <br />
+	<script>
+		$("#idLogout").click(function() {
+			document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+			localStorage.removeItem("RefreshToken");
+			localStorage.removeItem("CSRF-Token");
+		});
+	</script>
+	
+	<button id="idRefreshToken">RefreshToken</button> <br />
+	<script>
+		$("#idRefreshToken").click(function() {
+			var retrievedObject = localStorage.getItem('RefreshToken');
+			$.ajax({
+				  url: "http://localhost/token/refresh",
+				  dataType: "json",
+				  data: '{ "tokenId": ' + retrievedObject + ' }',
+				  contentType:"application/json; charset=utf-8",
+				  type: "post",
+				  success: function(data) {
+					    var dataStr = JSON.stringify(data);
+				    	console.log(dataStr);
+						$("#idResult").html(dataStr);
+						$("#idResult").css('color','green');
+						document.cookie =
+							 'Authorization='+data.jwt+'; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+						localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
+						localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
+				  }
+				})  .fail(function(data) {
+					var dataStr = JSON.stringify(data);
+			    	console.log(dataStr);
+					$("#idResult").html(dataStr);
+					$("#idResult").css('color','red');
+				    alert( "error" );
+				  });
+			  console.log(val);
+		});
+		
+	</script>
+</body>
+</html>
