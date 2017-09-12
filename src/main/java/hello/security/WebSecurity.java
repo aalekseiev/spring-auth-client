@@ -16,6 +16,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.security.PublicKey;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -25,10 +27,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     public static class MvcSecurity extends WebSecurityConfigurerAdapter {
 
         private CsrfTokenRepository jwtCsrfTokenRepository;
+        private PublicKey publicKey;
 
         @Autowired
-        public MvcSecurity(CsrfTokenRepository jwtCsrfTokenRepository) {
+        public MvcSecurity(CsrfTokenRepository jwtCsrfTokenRepository, PublicKey publicKey) {
             this.jwtCsrfTokenRepository = jwtCsrfTokenRepository;
+            this.publicKey = publicKey;
         }
 
         @Override
@@ -47,7 +51,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                         .authenticated()
                     .and()
-                    .addFilterBefore(new JWTAuthorizationFilter(), BasicAuthenticationFilter.class);
+                    .addFilterBefore(new JWTAuthorizationFilter(publicKey), BasicAuthenticationFilter.class);
         }
 
 
@@ -71,9 +75,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Configuration
     @Order(1)
     public static class ApiSecurity extends WebSecurityConfigurerAdapter {
+        private PublicKey publicKey;
+
+        @Autowired
+        public ApiSecurity(PublicKey publicKey) {
+            this.publicKey = publicKey;
+        }
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            JWTAuthorizationFilter filter = new JwtApiAuthorizationFilter();
+            JWTAuthorizationFilter filter = new JwtApiAuthorizationFilter(publicKey);
             filter.setIgnoreFailure(true);
             http
                     .antMatcher("/tasks")

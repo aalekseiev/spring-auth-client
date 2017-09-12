@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private boolean ignoreFailure = false;
 
-    public JWTAuthorizationFilter() {
+    private PublicKey publicKey;
+
+    public JWTAuthorizationFilter(PublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 
     @Override
@@ -68,7 +72,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
         // parse the token.
         Claims body = Jwts.parser()
-                .setSigningKey(SecurityConstants.SECRET)
+                .setSigningKey(publicKey)
                 .parseClaimsJws(token.replace(SecurityConstants.JWT_TOKEN_PREFIX, "")).getBody();
         String user = body.getSubject();
         List<String> permissions = body.get("permissions", List.class);
