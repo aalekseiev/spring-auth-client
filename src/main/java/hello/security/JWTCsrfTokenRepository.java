@@ -41,7 +41,7 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
     	String jwtHeader = null;
     	if (request.getCookies() != null) {
 	    	for (Cookie cookie : request.getCookies()) {
-	    		if (SecurityConstants.JWT_HEADER_STRING.equals(cookie.getName())) {
+	    		if (SecurityConstants.JWT_COOKIE_NAME.equals(cookie.getName())) {
 	    			jwtHeader = cookie.getValue();
 	    			break;
 	    		}
