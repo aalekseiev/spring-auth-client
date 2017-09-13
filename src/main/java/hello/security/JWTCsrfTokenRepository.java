@@ -2,7 +2,6 @@ package hello.security;
 
 import java.security.PublicKey;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,21 +44,15 @@ public class JWTCsrfTokenRepository implements CsrfTokenRepository {
 
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {
-    	
-    	String jwtHeader = null;
-    	if (request.getCookies() != null) {
-	    	for (Cookie cookie : request.getCookies()) {
-	    		if (SecurityConstants.JWT_COOKIE_NAME.equals(cookie.getName())) {
-	    			jwtHeader = cookie.getValue();
-	    			break;
-	    		}
-	    	}
-    	}
-
-    	if (jwtHeader == null || "GET".equals(request.getMethod())) {
+    	HttpCookieArray cookieArray = new HttpCookieArray(request.getCookies());
+		
+    	if (!cookieArray.contains(SecurityConstants.JWT_COOKIE_NAME) || "GET".equals(request.getMethod())) {
             return null;
         }
-    	String jwtString = jwtHeader;
+    	
+    	HttpCookie cookie = cookieArray.cookie(SecurityConstants.JWT_COOKIE_NAME);
+    	
+    	String jwtString = cookie.value();
     	try {
     		Jws<Claims> parseClaimsJws = Jwts.parser()
                     .setSigningKey(publicKey)
