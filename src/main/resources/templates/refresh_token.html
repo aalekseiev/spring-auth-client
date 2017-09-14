@@ -31,7 +31,7 @@
                 $("#idResult").html(dataStr);
                 $("#idResult").css('color', 'green');
                 document.cookie =
-                    'Authorization=' + data.jwt + '; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
+                    'Authorization=' + data.jwt + '; secure; expires=Fri, 3 Aug 2018 20:47:11 UTC; path=/';
                 localStorage.setItem('RefreshToken', JSON.stringify(data.refreshToken));
                 localStorage.setItem('CSRF-Token', JSON.stringify(data.csrfToken));
 
